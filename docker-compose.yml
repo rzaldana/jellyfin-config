@@ -1,0 +1,46 @@
+version: '3'
+services:
+  jellyfin:
+    image: 'jellyfin/jellyfin:10.9.8-amd64.20240721-051228'
+    volumes:
+      - type: "volume"
+        source: "jellyfin-cache"
+        target: "/cache"
+        read_only: false
+      - type: "volume"
+        source: "jellyfin-config"
+        target: "/config"
+        read_only: false 
+      - type: "bind"
+        source: "/share/media"
+        target: "/media"
+        read_only: false
+    ports:
+      - target: 8096 
+        published: 8096
+        host_ip: "0.0.0.0" # all network interfaces
+        protocol: "tcp"
+        mode: "host"
+    environment:
+      DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: "1"
+      HEALTHCHECK_URL: "http://localhost:8096/health"
+      JELLYFIN_CACHE_DIR: "/cache"
+      JELLYFIN_CONFIG_DIR: "/config/config"
+      JELLYFIN_DATA_DIR: "/config"
+      JELLYFIN_FFMPEG: "/usr/lib/jellyfin-ffmpeg/ffmpeg"
+      JELLYFIN_LOG_DIR: "/config/log"
+      JELLYFIN_WEB_DIR: "/jellyfin/jellyfin-web"
+      LANG: en_US.UTF-8
+      LANGUAGE: "en_US:en"
+      LC_ALL: "en_US.UTF-8"
+      MALLOC_TRIM_THRESHOLD_: "131072"
+      NVIDIA_DRIVER_CAPABILITIES: "compute,video,utility"
+      NVIDIA_VISIBLE_DEVICES: "all"
+      PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+volumes:
+  jellyfin-cache:
+    name: "jellyfin-cache"
+    driver: "local"
+  jellyfin-config:
+    name: "jellyfin-config"
+    driver: "local"
